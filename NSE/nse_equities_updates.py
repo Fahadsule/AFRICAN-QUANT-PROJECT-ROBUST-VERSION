@@ -4,6 +4,7 @@ import re
 from datetime import datetime
 import os
 from bs4 import BeautifulSoup
+import sqlite3
 
 def extract_date_from_filename(filename):
     match = re.search(r'([A-Za-z]+ \d{1,2}, \d{4})', filename)
@@ -178,7 +179,7 @@ def main():
     print(final_df)
     print("THIS TEST SHOULD RETURN RENAMED COLUMNS AND TRUE FINAL")
 
-    DB_FILE = "market_data.db"
+    DB_FILE = "db/market_data.db"
     TABLE_NAME = "nse_ke_daily_ohlcv"
 
     for col in ['low', 'high', 'closing_price', 'volume']:
