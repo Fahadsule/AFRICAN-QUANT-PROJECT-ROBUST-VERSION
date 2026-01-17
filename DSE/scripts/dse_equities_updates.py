@@ -460,7 +460,7 @@ if __name__ == "__main__":
     print("🔗 API Data Extractor v3.0 - Persistent Retry Edition")
     print("="*70)
     
-    if not os.path.exists('datalinks.csv'):
+    if not os.path.exists('DSE/data/datalinks.csv'):
         print("datalinks.csv not found. Creating example file...")
         create_example_csv()
         print("\nPlease edit datalinks.csv with your actual URLs,")
