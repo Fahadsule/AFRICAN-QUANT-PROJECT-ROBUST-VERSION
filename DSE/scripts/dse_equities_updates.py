@@ -345,7 +345,7 @@ def fetch_and_extract_latest_data():
                 result_df[col] = pd.to_numeric(result_df[col], errors="coerce")  # turns invalid values to NaN
 
             #connect to sqlite3
-            conn = sqlite3.connect("db/test.db")
+            conn = sqlite3.connect("db/market_data.db")
 
             # 5️⃣ Append to table
             result_df.to_sql("dse_tz_daily_ohlcv", conn, if_exists="append", index=False)
