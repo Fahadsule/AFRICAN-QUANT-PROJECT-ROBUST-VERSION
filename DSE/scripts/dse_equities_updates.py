@@ -25,7 +25,7 @@ def fetch_with_persistent_retry(url: str, max_retries: int = 50, initial_delay: 
             print(f"   Attempt {attempt + 1}/{max_retries + 1}...", end=" ")
             
             # Add jitter to prevent thundering herd
-            delay = initial_delay * (2 ** attempt) + random.uniform(0, 1)
+            delay = initial_delay * (1 ** attempt) + random.uniform(0, 1)
             
             # Only wait after the first attempt
             if attempt > 0:
@@ -313,7 +313,7 @@ def fetch_and_extract_latest_data():
                 })
                 continue
         
-        # Step 3: Save successful results to test.csv
+        # Step 3: Save successful results to database
         if all_latest_rows:
             # Create DataFrame from all latest rows
             result_df = pd.DataFrame(all_latest_rows)
@@ -332,27 +332,26 @@ def fetch_and_extract_latest_data():
             
             result_df = result_df[all_meta_cols + other_cols]
 
-            #convert ro date
-            result_df["trade_date"]=pd.to_datetime(result_df["trade_date"]).dt.date
+            # Convert to date
+            result_df["trade_date"] = pd.to_datetime(result_df["trade_date"]).dt.date
 
-            #remove some columns and rename some
-            result_df=result_df[{"trade_date","company","volume","high","low","opening_price","closing_price"}]
+            # Remove some columns and rename some - FIX: Changed from set {} to list []
+            result_df = result_df[["trade_date", "company", "volume", "high", "low", "opening_price", "closing_price"]]
             result_df.rename(columns={"company": "ticker"}, inplace=True)
 
-            #converting numeric columns
+            # Converting numeric columns
             num_cols = ["volume", "high", "low", "opening_price", "closing_price"]
             for col in num_cols:
                 result_df[col] = pd.to_numeric(result_df[col], errors="coerce")  # turns invalid values to NaN
 
-            #connect to sqlite3
+            # Connect to sqlite3
             conn = sqlite3.connect("db/market_data.db")
 
-            # 5️⃣ Append to table
+            # Append to table
             result_df.to_sql("dse_tz_daily_ohlcv", conn, if_exists="append", index=False)
 
             conn.close()
             print("Data appended to dse_daily_ohlcv successfully!")
-
 
             
             print(f"\n{'='*60}")
@@ -367,18 +366,19 @@ def fetch_and_extract_latest_data():
                 avg_time = total_response_time / len(result_df)
                 print(f"📈 Average per URL: {avg_attempts:.1f} attempts, {avg_time:.2f}s")
             
-            # Show sample of saved data
-            date_cols = [col for col in result_df.columns if 'date' in col.lower() and col != 'data_fetched_at']
+            # Show sample of saved data - Note: source_url column was removed above
+            date_cols = [col for col in result_df.columns if 'date' in col.lower()]
             if date_cols:
                 date_col = date_cols[0]
                 print(f"\n📋 Sample of latest records:")
                 for idx, row in result_df.head(3).iterrows():
-                    url_display = row['source_url'][:50] + '...' if len(row['source_url']) > 50 else row['source_url']
-                    print(f"   • {url_display}")
+                    # Since source_url was removed, just show the ticker
+                    if 'ticker' in row:
+                        print(f"   • Ticker: {row['ticker']}")
                     if date_col in row and pd.notna(row[date_col]):
                         print(f"     Latest date: {row[date_col]}")
         else:
-            print(f"\n⚠️  No successful data extractions. 'test.csv' will not be created.")
+            print(f"\n⚠️  No successful data extractions.")
         
         # Step 4: Save failed links to failed_links.csv
         if failed_links:
@@ -414,7 +414,7 @@ def fetch_and_extract_latest_data():
         print(f"   Total execution time: {total_response_time:.2f}s")
         
         if all_latest_rows:
-            print(f"\n✅ Data saved to: test.csv")
+            print(f"\n✅ Data saved to database successfully")
         if failed_links:
             print(f"⚠️  Failed URLs saved to: failed_links.csv")
         

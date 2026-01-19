@@ -71,7 +71,7 @@ else:
         df = df.sort_values(['trade_date', 'ticker'])
         
         print(f"\n✅ Extracted {len(df)} records")
-        conn = sqlite3.connect("market_data.db")
+        conn = sqlite3.connect("db/market_data.db")
         df.to_sql("brvm_daily_ohlcv", conn, if_exists="append", index=False)
         print("DATA ADDED TO DATABASE✅✅✅")
         conn.close()

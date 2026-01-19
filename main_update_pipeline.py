@@ -26,7 +26,7 @@ def run_sql_file(db_path, sql_file):
 
 if __name__=="__main__":
     DB_PATH="market_data.db"
-    run_script("DSE/scripts/dse_equities_update.py")
+    run_script("DSE/scripts/dse_equities_updates.py")
     run_sql_file(DB_PATH,"DSE/scripts/autofill_dse.sql")
     run_script("NSE/nse_equities_updates.py")
     run_sql_file(DB_PATH,"NSE/autofill_nse.sql")
