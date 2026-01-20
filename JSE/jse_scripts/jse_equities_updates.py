@@ -88,6 +88,6 @@ else:
     print("🎉 No missing tickers, all data downloaded successfully.")
 
 
-conn = sqlite3.connect("market_data.db")
+conn = sqlite3.connect("db/market_data.db")
 master_df.to_sql("jse_sa_daily_ohlcv", conn, if_exists="append", index=False)
 print("jse updated for_{input_date}")

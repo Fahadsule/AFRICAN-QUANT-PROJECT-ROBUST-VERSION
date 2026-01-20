@@ -68,7 +68,7 @@ else:
 desired_order = ['trade_date', 'ticker', 'opening_price', 'high', 'low', 'closing_price', 'volume']
 master_df = master_df[desired_order]
 
-conn = sqlite3.connect("market_data.db")
+conn = sqlite3.connect("db/market_data.db")
 master_df.to_sql("jse_indices_daily_ohlcv", conn, if_exists="append", index=False)
 print("jse indices updated for_{input_date}")
 
