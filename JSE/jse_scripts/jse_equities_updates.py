@@ -1,10 +1,8 @@
 import pandas as pd
-import yfinance
-import sqlite3
-
 import yfinance as yf
-import pandas as pd
 import sqlite3
+import psycopg2
+from sqlalchemy import create_engine
 
 # 1️⃣ Load your tickers CSV
 tickers_df = pd.read_csv("JSE/data/jse_list.csv")  # your CSV with a column 'ticker'
@@ -88,6 +86,7 @@ else:
     print("🎉 No missing tickers, all data downloaded successfully.")
 
 
-conn = sqlite3.connect("db/market_data.db")
-master_df.to_sql("jse_sa_daily_ohlcv", conn, if_exists="append", index=False)
+db_connection_string = "postgresql://fahad:589Aupgradez2BdfK@localhost:5432/africanfinance_db"
+engine = create_engine(db_connection_string)
+master_df.to_sql("jse_sa_daily_ohlcv", engine, if_exists="append", index=False)
 print("jse updated for_{input_date}")

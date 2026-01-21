@@ -4,6 +4,8 @@ from datetime import datetime
 import glob
 import sqlite3
 import os
+import psycopg2
+from sqlalchemy import create_engine
 
 def extract_brvm_table_with_date(html_path):
     with open(html_path, 'r', encoding='utf-8') as file:
@@ -71,10 +73,11 @@ else:
         df = df.sort_values(['trade_date', 'ticker'])
         
         print(f"\n✅ Extracted {len(df)} records")
-        conn = sqlite3.connect("db/market_data.db")
-        df.to_sql("brvm_daily_ohlcv", conn, if_exists="append", index=False)
-        print("DATA ADDED TO DATABASE✅✅✅")
-        conn.close()
+        db_connection_string = "postgresql://fahad:589Aupgradez2BdfK@localhost:5432/africanfinance_db"
+        engine = create_engine(db_connection_string)
+
+        df.to_sql("brvm_daily_ohlcv", engine, if_exists="append", index=False)
+        print("DATA ADDED TO POSTGRESQL DATABASE✅✅✅")
 
     else:
         print("No data extracted")

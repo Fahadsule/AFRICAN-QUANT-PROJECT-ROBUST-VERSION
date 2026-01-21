@@ -5,6 +5,8 @@ from datetime import datetime
 import os
 from bs4 import BeautifulSoup
 import sqlite3
+import psycopg2
+from sqlalchemy import create_engine
 
 def extract_date_from_filename(filename):
     match = re.search(r'([A-Za-z]+ \d{1,2}, \d{4})', filename)
@@ -179,38 +181,17 @@ def main():
     print(final_df)
     print("THIS TEST SHOULD RETURN RENAMED COLUMNS AND TRUE FINAL")
 
-    DB_FILE = "db/market_data.db"
+  
     TABLE_NAME = "nse_ke_daily_ohlcv"
 
     for col in ['low', 'high', 'closing_price', 'volume']:
         final_df[col] = pd.to_numeric(final_df[col], errors='coerce')
     
-    with sqlite3.connect(DB_FILE) as conn:
-        cursor = conn.cursor()
-        cursor.execute(f"""
-            CREATE TABLE IF NOT EXISTS {TABLE_NAME} (
-                ticker TEXT,
-                company_name TEXT,
-                low REAL,
-                high REAL,
-                closing_price REAL,
-                volume INTEGER,
-                trade_date DATE,
-                PRIMARY KEY (ticker, trade_date)
-            )
-        """)
-        conn.commit()
+    db_connection_string = "postgresql://fahad:589Aupgradez2BdfK@localhost:5432/africanfinance_db"
+    engine = create_engine(db_connection_string)
 
-
-    with sqlite3.connect(DB_FILE) as conn:
-        final_df.to_sql(
-            TABLE_NAME,
-            conn,
-            if_exists='append',  # use 'append' + PRI
-            index=False,
-            method='multi')
     
-    
+    final_df.to_sql("nse_ke_daily_ohlcv", engine, if_exists="append", index=False)
 
     print(f"✅ Data loaded into {TABLE_NAME} successfully!")
 

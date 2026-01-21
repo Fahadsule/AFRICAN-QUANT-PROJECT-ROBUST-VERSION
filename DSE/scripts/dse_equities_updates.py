@@ -6,6 +6,8 @@ import json
 from typing import Optional, Dict, Any
 import random
 import sqlite3
+import psycopg2
+from sqlalchemy import create_engine
 
 
 def fetch_with_persistent_retry(url: str, max_retries: int = 50, initial_delay: float = 2.0) -> Optional[Dict[str, Any]]:
@@ -344,13 +346,14 @@ def fetch_and_extract_latest_data():
             for col in num_cols:
                 result_df[col] = pd.to_numeric(result_df[col], errors="coerce")  # turns invalid values to NaN
 
-            # Connect to sqlite3
-            conn = sqlite3.connect("db/market_data.db")
+            db_connection_string = "postgresql://fahad:589Aupgradez2BdfK@localhost:5432/africanfinance_db"
+            engine = create_engine(db_connection_string)
+            
 
             # Append to table
-            result_df.to_sql("dse_tz_daily_ohlcv", conn, if_exists="append", index=False)
+            result_df.to_sql("dse_tz_daily_ohlcv", engine, if_exists="append", index=False)
 
-            conn.close()
+            
             print("Data appended to dse_daily_ohlcv successfully!")
 
             

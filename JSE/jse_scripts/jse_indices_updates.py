@@ -1,6 +1,8 @@
 import yfinance as yf
 import pandas as pd
 import sqlite3
+import psycopg2
+from sqlalchemy import create_engine
 
 # 1️⃣ Load your tickers CSV
 tickers_df = pd.read_csv("JSE/data/jse_indices.csv")  # your CSV with a column 'ticker'
@@ -68,8 +70,9 @@ else:
 desired_order = ['trade_date', 'ticker', 'opening_price', 'high', 'low', 'closing_price', 'volume']
 master_df = master_df[desired_order]
 
-conn = sqlite3.connect("db/market_data.db")
-master_df.to_sql("jse_indices_daily_ohlcv", conn, if_exists="append", index=False)
+db_connection_string = "postgresql://fahad:589Aupgradez2BdfK@localhost:5432/africanfinance_db"
+engine = create_engine(db_connection_string)
+master_df.to_sql("jse_indices_daily_ohlcv", engine, if_exists="append", index=False)
 print("jse indices updated for_{input_date}")
 
 
