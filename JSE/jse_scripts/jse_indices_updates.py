@@ -72,7 +72,7 @@ master_df = master_df[desired_order]
 
 db_connection_string = "postgresql://fahad:589Aupgradez2BdfK@localhost:5432/africanfinance_db"
 engine = create_engine(db_connection_string)
-master_df.to_sql("jse_indices_daily_ohlcv", engine, if_exists="append", index=False)
+
 print("jse indices updated for_{input_date}")
 
 
