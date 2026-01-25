@@ -29,11 +29,16 @@ def main():
             table_name="nse_corporate_actions_bonus"
             columns=["announcement_date","book_closure_date","credit_date"]
         elif file_path=="CORPORATE_ACTIONS/nse_rights.csv":
-            table_name="nse_corporate_actions_bonus"
+            table_name="nse_corporate_actions_rights"
             columns=["announcement_date","book_closure_date","credit_date"]
         df=format_dates(file_path, columns)
-        df.to_sql(table_name, engine, if_exists="append", index=False)
+        if file_path=="CORPORATE_ACTIONS/nse_dividends.csv":
+            df = df.drop_duplicates(subset=['ticker', 'announcement_date','dividend_type'])
+        else:
+            df = df.drop_duplicates(subset=['ticker', 'announcement_date'])
         
+        df.to_sql(table_name, engine, if_exists="append", index=False)
+    print("-------------------------------DATA LOADED--------------------------")    
 
 if __name__=="__main__":
     main()
