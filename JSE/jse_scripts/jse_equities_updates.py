@@ -30,6 +30,7 @@ for ticker in tickers:
             interval="1d",
             auto_adjust=False,
             progress=False
+        
         )
         df = df[df.index.date == fetch_date.date()]
         if df.empty:
