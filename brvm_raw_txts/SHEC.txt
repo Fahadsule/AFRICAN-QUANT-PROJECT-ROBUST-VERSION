@@ -1,6 +1,3 @@
-
-Period :
-From: Au:
 Date 	Closing 	Further down 	Higher 	Opening 	Volume Titles 	FCFA Volume 	Variation %
 27/01/2026 	1 560 	1 560 	1 590 	1 590 	22 603 	35 260 680 	-1,58%
 26/01/2026 	1 585 	1 585 	1 600 	1 600 	5 505 	8 725 425 	-0.94%
